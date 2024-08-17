@@ -6,13 +6,8 @@ type SidebarMainLink = {
     href: string;
     icon?: string;
 };
-type SidebarSubLink = {
-    label: string;
-    href: string;
-};
 export declare class CoamWrapper extends LitElement {
     app: string;
-    links: SidebarSubLink[];
     _loadMenuTask: Task<never[], {
         menuItems: SidebarMainLink[];
     }>;
