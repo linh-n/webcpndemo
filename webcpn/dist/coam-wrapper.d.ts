@@ -1,4 +1,11 @@
 import { LitElement } from 'lit';
+import { Task } from '@lit/task';
+type SidebarMainLink = {
+    app: string;
+    label: string;
+    href: string;
+    icon?: string;
+};
 type SidebarSubLink = {
     label: string;
     href: string;
@@ -6,6 +13,9 @@ type SidebarSubLink = {
 export declare class CoamWrapper extends LitElement {
     app: string;
     links: SidebarSubLink[];
+    _loadMenuTask: Task<never[], {
+        menuItems: SidebarMainLink[];
+    }>;
     render(): import("lit-html").TemplateResult<1>;
     static styles: import("lit").CSSResult;
 }

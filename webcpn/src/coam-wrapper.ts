@@ -68,7 +68,8 @@ export class CoamWrapper extends LitElement {
   @property({type: Array})
   links: SidebarSubLink[] = APPS;
 
-  private _loadMenuTask = new Task(this, {
+  _loadMenuTask = new Task(this, {
+    args: () => [],
     task: async (_, {signal}) => {
       const response = await fetch(
         `https://webcpndemo-menusvc.vercel.app/api/menu`,
@@ -77,54 +78,11 @@ export class CoamWrapper extends LitElement {
       if (!response.ok) {
         throw new Error(response.status.toString());
       }
-      return response.json() as unknown as SidebarMainLink[];
+      return response.json() as unknown as { menuItems: SidebarMainLink[] };
     },
   });
 
   override render() {
-    return this._loadMenuTask.render({
-      pending: () => html`
-        <div class="appbar">
-          <div class="nav">
-            <slot name="logo"></slot>
-          </div>
-        </div>
-        <div class="sidebar">
-          <ul class="main">
-          </ul>
-        </div>
-        <div class="content">
-          <slot></slot>
-        </div>
-      `,
-      complete: (items) => html`
-        <div class="appbar">
-          <div class="nav">
-            <slot name="logo"></slot>
-          </div>
-        </div>
-        <div class="sidebar">
-          <ul class="main">
-            ${items.map(
-              (app) => html`
-                <li class="main-item ${this.app === app.app ? 'active' : ''}">
-                  ${unsafeHTML(app.icon)}
-                  <a href="${app.href}">${app.label}</a>
-                </li>
-                ${this.app === app.app
-                  ? html`<li class="sub"><slot name="sidebar"></slot></li>`
-                  : ''}
-              `
-            )}
-          </ul>
-        </div>
-        <div class="content">
-          <slot></slot>
-        </div>
-      `,
-      error: (e) => html`<p>Error: ${e}</p>`,
-    });
-
     return html`
         <div class="appbar">
           <div class="nav">
@@ -132,19 +90,26 @@ export class CoamWrapper extends LitElement {
           </div>
         </div>
         <div class="sidebar">
-          <ul class="main">
-            ${APPS.map(
-              (app) => html`
-                <li class="main-item ${this.app === app.app ? 'active' : ''}">
-                  ${unsafeHTML(app.icon)}
-                  <a href="${app.href}">${app.label}</a>
-                </li>
-                ${this.app === app.app
-                  ? html`<li class="sub"><slot name="sidebar"></slot></li>`
-                  : ''}
-              `
-            )}
-          </ul>
+          ${this._loadMenuTask.render({
+            initial: () => html`<p>Waiting to start task</p>`,
+            pending: () => html`<p>Running task...</p>`,
+            complete: (menu) => html`
+              <ul class="main">
+                ${menu.menuItems.map(
+                  (app) => html`
+                    <li class="main-item ${this.app === app.app ? 'active' : ''}">
+                      ${unsafeHTML(app.icon)}
+                      <a href="${app.href}">${app.label}</a>
+                    </li>
+                    ${this.app === app.app
+                      ? html`<li class="sub"><slot name="sidebar"></slot></li>`
+                      : ''}
+                  `
+                )}
+              </ul>
+            `,
+            error: (error) => html`<p>Oops, something went wrong: ${error}</p>`,
+          })}
         </div>
         <div class="content">
           <slot></slot>

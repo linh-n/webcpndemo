@@ -5,6 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { LitElement, html, css } from 'lit';
+import { Task } from '@lit/task';
 import { customElement, property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 const APPS = [
@@ -56,6 +57,16 @@ let CoamWrapper = class CoamWrapper extends LitElement {
         super(...arguments);
         this.app = '';
         this.links = APPS;
+        this._loadMenuTask = new Task(this, {
+            args: () => [],
+            task: async (_, { signal }) => {
+                const response = await fetch(`https://webcpndemo-menusvc.vercel.app/api/menu`, { signal });
+                if (!response.ok) {
+                    throw new Error(response.status.toString());
+                }
+                return response.json();
+            },
+        });
     }
     render() {
         return html `
@@ -65,17 +76,24 @@ let CoamWrapper = class CoamWrapper extends LitElement {
           </div>
         </div>
         <div class="sidebar">
-          <ul class="main">
-            ${APPS.map((app) => html `
-                <li class="main-item ${this.app === app.app ? 'active' : ''}">
-                  ${unsafeHTML(app.icon)}
-                  <a href="${app.href}">${app.label}</a>
-                </li>
-                ${this.app === app.app
-            ? html `<li class="sub"><slot name="sidebar"></slot></li>`
-            : ''}
-              `)}
-          </ul>
+          ${this._loadMenuTask.render({
+            initial: () => html `<p>Waiting to start task</p>`,
+            pending: () => html `<p>Running task...</p>`,
+            complete: (menu) => html `
+              <ul class="main">
+                ${menu.menuItems.map((app) => html `
+                    <li class="main-item ${this.app === app.app ? 'active' : ''}">
+                      ${unsafeHTML(app.icon)}
+                      <a href="${app.href}">${app.label}</a>
+                    </li>
+                    ${this.app === app.app
+                ? html `<li class="sub"><slot name="sidebar"></slot></li>`
+                : ''}
+                  `)}
+              </ul>
+            `,
+            error: (error) => html `<p>Oops, something went wrong: ${error}</p>`,
+        })}
         </div>
         <div class="content">
           <slot></slot>
@@ -149,7 +167,7 @@ CoamWrapper.styles = css `
 
     li.main-item.active {
       background-color: #e3f2fd;
-      color: #2196f3;
+      color: #2196f3 !important;
     }
 
     .sub {
@@ -158,7 +176,7 @@ CoamWrapper.styles = css `
 
     .sidebar ::slotted(a) {
       display: block;
-      padding: 5px 10px;
+      padding: 5px 10px !important;
       text-decoration: none;
       color: inherit;
       font-size: 13px;
@@ -167,7 +185,7 @@ CoamWrapper.styles = css `
 
     .sidebar ::slotted(a.active) {
       background-color: #e3f2fd;
-      color: #2196f3;
+      color: #2196f3 !important;
     }
   `;
 __decorate([
