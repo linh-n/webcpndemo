@@ -136,7 +136,7 @@ CoamWrapper.styles = css `
       display: block;
       padding: 5px 10px !important;
       text-decoration: none;
-      color: inherit;
+      color: #424242 !important;
       font-size: 13px;
       border-radius: 4px;
     }
