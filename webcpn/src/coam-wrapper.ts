@@ -1,4 +1,5 @@
 import {LitElement, html, css} from 'lit';
+import {Task} from '@lit/task';
 import {customElement, property} from 'lit/decorators.js';
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
@@ -67,7 +68,63 @@ export class CoamWrapper extends LitElement {
   @property({type: Array})
   links: SidebarSubLink[] = APPS;
 
+  private _loadMenuTask = new Task(this, {
+    task: async (_, {signal}) => {
+      const response = await fetch(
+        `https://webcpndemo-menusvc.vercel.app/api/menu`,
+        {signal}
+      );
+      if (!response.ok) {
+        throw new Error(response.status.toString());
+      }
+      return response.json() as unknown as SidebarMainLink[];
+    },
+  });
+
   override render() {
+    return this._loadMenuTask.render({
+      pending: () => html`
+        <div class="appbar">
+          <div class="nav">
+            <slot name="logo"></slot>
+          </div>
+        </div>
+        <div class="sidebar">
+          <ul class="main">
+          </ul>
+        </div>
+        <div class="content">
+          <slot></slot>
+        </div>
+      `,
+      complete: (items) => html`
+        <div class="appbar">
+          <div class="nav">
+            <slot name="logo"></slot>
+          </div>
+        </div>
+        <div class="sidebar">
+          <ul class="main">
+            ${items.map(
+              (app) => html`
+                <li class="main-item ${this.app === app.app ? 'active' : ''}">
+                  ${unsafeHTML(app.icon)}
+                  <a href="${app.href}">${app.label}</a>
+                </li>
+                ${this.app === app.app
+                  ? html`<li class="sub"><slot name="sidebar"></slot></li>`
+                  : ''}
+              `
+            )}
+          </ul>
+        </div>
+        <div class="content">
+          <slot></slot>
+        </div>
+      `,
+      error: (e) => html`<p>Error: ${e}</p>`,
+    });
+
     return html`
         <div class="appbar">
           <div class="nav">
