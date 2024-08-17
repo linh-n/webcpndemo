@@ -10,9 +10,9 @@ import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 
 export default {
-  input: 'coam-sidebar.js',
+  input: 'dist/coam-wrapper.js',
   output: {
-    file: 'coam-sidebar.bundled.js',
+    file: 'dist/coam-wrapper.bundled.js',
     format: 'esm',
   },
   onwarn(warning) {

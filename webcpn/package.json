@@ -9,6 +9,7 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
+    "publish": "tsc && rollup -c",
     "clean": "rimraf coam-sidebar.{d.ts,d.ts.map,js,js.map} test/coam-sidebar.{d.ts,d.ts.map,js,js.map} test/coam-sidebar_test.{d.ts,d.ts.map,js,js.map}",
     "lint": "npm run lint:lit-analyzer && npm run lint:eslint",
     "lint:eslint": "eslint 'src/**/*.ts'",

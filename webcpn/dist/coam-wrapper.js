@@ -32,7 +32,7 @@ const APPS = [
     {
         app: 'app2',
         label: 'App 2',
-        href: '/dev/index2.html',
+        href: 'http://localhost:3001',
         icon: `
           <svg
             width="15"
