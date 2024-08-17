@@ -161,7 +161,7 @@ export class CoamWrapper extends LitElement {
 
     li.main-item.active {
       background-color: #e3f2fd;
-      color: #2196f3;
+      color: #2196f3 !important;
     }
 
     .sub {
@@ -170,7 +170,7 @@ export class CoamWrapper extends LitElement {
 
     .sidebar ::slotted(a) {
       display: block;
-      padding: 5px 10px;
+      padding: 5px 10px !important;
       text-decoration: none;
       color: inherit;
       font-size: 13px;
@@ -179,7 +179,7 @@ export class CoamWrapper extends LitElement {
 
     .sidebar ::slotted(a.active) {
       background-color: #e3f2fd;
-      color: #2196f3;
+      color: #2196f3 !important;
     }
   `;
 }
