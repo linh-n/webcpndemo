@@ -1,11 +1,12 @@
 <script>
 	import Header from './Header.svelte';
 	import '../app.css';
+	import { page } from '$app/stores';
 </script>
 
 <coam-wrapper app="app1">
-  <a slot="sidebar" href="/">Home</a>
-  <a slot="sidebar" href="/about">About</a>
+	<a slot="sidebar" class={$page.url.pathname === '/' ? 'active' : ''} href="/">Home</a>
+	<a slot="sidebar" class={$page.url.pathname === '/about' ? 'active' : ''} href="/about">About</a>
 
 	<div class="app">
 		<Header />
