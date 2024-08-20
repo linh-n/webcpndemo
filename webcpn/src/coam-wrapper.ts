@@ -97,8 +97,7 @@ export class CoamWrapper extends LitElement {
 
     .appbar {
       grid-area: appbar;
-      /* background-color: #2196f3; */
-      background-color: red;
+      background-color: #2196f3;
       display: flex;
       justify-content: space-between;
       align-items: center;
